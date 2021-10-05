@@ -1,0 +1,107 @@
+---
+title: "Rmarkdownrangel"
+author: "juan sebastian herrera sanchez"
+date: "30 de agosto de 2021"
+output: html_document
+---
+Para realizar una simulacion debemos generar los valores aleatorios de acuerdo a algunas distribucion de probabilidad. Tengan en cuenta sembrar una semilla para poder replicar el ejercicio.
+
+```{r setup, include=TRUE}
+#Semilla#
+set.seed(1)
+
+####Aleatorio####
+x=rnorm(2000, 1030000, 200000) #salarios
+hist(x, col="blue")
+beta1=rnorm(2000,0.3,0.01) #suponer que son betas reales, promedio real 0,3 " en la practica es 0.3"
+beta=runif(2000, 150000,2000000) #consumo minimo
+
+plot(density(beta1), col="Red")
+
+```
+
+Generando la variable y "dependiente", creandola a partir de una regresión lineal simple. Recordando que el beta real es 0.3.
+"SOY DIOS"
+```{r setup, include=TRUE}
+y=beta+beta1*x #FENOMENOS SOCIALES NO ESTAN CONSTRUIDOS DE ESTA FORMA, mayoria veces imperfecta, hay otras variables, en este caso yo he generado la y "perfecta combinacion lineal deterministica sin error"
+#A PESAR DE QUE TENGA MUESTRA DISTINTAS EL BETA NO DEBERIA VARIAR MUCHO, LA IDEA ES HACERLO CON MUCHAS MUESTRAS Y NO SOLO 3
+hist(y)
+###
+datos=data.frame(x,y)
+##asumiendo que no tenemos idea o indicios de la relación entre x y "y", ingresos y gastos
+
+###eficiencia 
+#MENOS VARIACION ES EFICIENTE
+#AL CALCULAR LA VARIANZA DE VARIOS MUESTRAS LA DESVIACION DEBE SER PEQUEÑA, "EN LA VIDA REAL NO SE"
+set.seed(1)
+datos1= datos[sample(nrow(datos),100),]
+set.seed(2)
+datos2= datos[sample(nrow(datos),100),]
+set.seed(3)
+datos3= datos[sample(nrow(datos),100),]
+
+reg1=lm(y~x, data=datos1)
+reg2=lm(y~x, data=datos2)
+reg3=lm(y~x, data=datos3)
+reg1$coefficients
+reg2$coefficients
+reg3$coefficients
+##B1ESTIMADO=-0.05851,B12=0.2938, B13=0.7394
+#EL QUE MAS SE ACERCA AL BETA REAL ES B12, HAY UNA VARIACION PORQUE NO TODAS LAS PAERSONAS TIENEN LA MISMA RELACION ENTRE LAS DOS VARIABLES
+efi=c(-0.0585,0.2938,0.739)
+plot(efi)
+sd(efi)
+#DESVIACION MUCHO MAS GRANDE QUE EL 0.01, COSAS POSITIVAS DESVIACION NO ME DIO UNIDADES O DECIMALES MUY GRANDES, PROBAR QUE LA TECNICA ES CONSISTENTE, EFICIENTE E INSESGADA "MCO", VA A DAR CUANDO PONGA A CORRER ESTE PROGRAMA 100 O 1000 VECES, LA DESVIACION DEVERIA DAR 0.01
+
+###consistencia 
+# A MEDIDA QUE AUMENTA LA MUESTRA EL BETA QUE ESTIMA SEA MAS CERCANO AL BETA REAL
+set.seed(30)
+datos4= datos[sample(nrow(datos),10),]
+datos5= datos[sample(nrow(datos),100),]
+datos6= datos[sample(nrow(datos),1000),]
+datos7= datos[sample(nrow(datos),1500),]
+datos8= datos[sample(nrow(datos),1999),]
+reg4=lm(y~x, data=datos4)
+reg5=lm(y~x, data=datos5)
+reg6=lm(y~x, data=datos6)
+reg7=lm(y~x, data=datos7)
+reg8=lm(y~x, data=datos8)
+#NO ES OBLIGATORIO PERO PARA GRAFICA SIRVE, QUITEME LOS NOMBRES, SOLO QUIERO PEDIRLE EL SEGUNDO VALOR DE ESE VECTOR, SOLO BOTA LOS BETAS, ASÍ CAMBIE SEMILLA, X O Y, SE VA A AJUSTAR "AUTOMATIZAR"
+reg4=as.vector(reg4$coefficients)
+reg5=as.vector(reg5$coefficients)
+reg6=as.vector(reg6$coefficients)
+reg7=as.vector(reg7$coefficients)
+reg8=as.vector(reg8$coefficients)
+reg4[2]
+reg5[2]
+reg6[2]
+reg7[2]
+reg8[2]
+####b14=-0.282, b15=0.1398, b16=0.201, b17=0.329, b18=0.318
+consi=c(reg4[2], reg5[2], reg6[2], reg7[2], reg8[2])
+t=c(10,100,1000,1500,1999)
+plot(consi~t, col= "blue", xlab= "Tamaño de muestra ", ylab= "Sesgo")
+abline(h=0.3, col="red") #H=HORIZONTAL, LINEA
+
+####prueba con for
+c=1
+for (i in 1:5) {
+  c=c*10
+  set.seed(30)
+  datos12=datos[sample.double(nrow(datos),lm(Y~x)) ] 
+  print(c)
+}
+###insesgadez
+z=rnorm(2000,10000,2000) #no tiene relacion x, independiente, se podia separar "independientes" "valores betas buenos"
+beta2=rnorm(2000,0.9,0.001)
+l=beta+(beta1*x)+beta2*z
+lm(l~x)
+lm(l~z)
+z1=(x*0.3) #z relacionada con x, si omito una que tiene relaciones con x se sesga el beta, a partir de x, valores betas malitos.
+t=beta+(beta1*x)+beta2*z1 #se explica con z y con x
+lm(t~z1)
+lm(t~x)
+reg8
+```
+
+GRACIAS

@@ -1,0 +1,36 @@
+---
+title: "parcial"
+author: "juan sebastian herrera sanchez"
+date: "6 de septiembre de 2021"
+output: word_document
+---
+
+```{r setup, include=TRUE}
+##solucion 3 punto
+x=rnorm(10000, 250000, 50000) 
+beta1=rnorm(10000,3.5,0.01)
+beta0=runif(10000,1500,1600)
+plot(density(beta1), col="Red")
+y=beta0+beta1*x 
+datos=data.frame(x,y)
+
+set.seed(1) ##semilla
+datos1= datos[sample(nrow(datos),10),]
+datos2= datos[sample(nrow(datos),2000),]
+datos3= datos[sample(nrow(datos),6000),]
+
+reg1=lm(y~x, data=datos1)
+reg2=lm(y~x, data=datos2)
+reg3=lm(y~x, data=datos3)
+
+reg1=as.vector(reg1$coefficients)
+reg2=as.vector(reg2$coefficients)
+reg3=as.vector(reg3$coefficients)
+
+reg1[2]
+reg2[2]
+reg3[2]
+
+```
+
+

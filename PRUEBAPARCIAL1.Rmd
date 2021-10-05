@@ -1,0 +1,116 @@
+---
+title: 'PARCIAL #1 de Econometria I'
+author: "Juan Sebastian Herrera Sanchez"
+date: "3 de Septiembre de 2021"
+output:
+  word_document: default
+  html_document: default
+---
+
+## PARCIAL ECONOMETRIA 1
+
+2PUNTO
+A partir de datos punto 2 (documento xlsx) realice dos regresiones lineales simples en R
+donde la variable PIB municipal sea la dependiente. (Nota: use el comando lm para la
+estimación)
+
+```{r setup, include=TRUE}
+###CODIGO
+library(readxl) ##leer
+datos<-hsranqui_Datos_punto_2
+attach(datos)
+#PIB municipal variable dependiente
+colnames(datos)=c("ciudad","habitantes 2019","Indice pobreza municipal 2018","PIB municipal 2018")#cambiar nombre de las variables porque son muy largos
+names(datos) #nombre variables
+
+##regresión lineal #1, x=`habitantes 2019`, y=`PIB municipal 2018`
+f.demanda=lm(as.numeric(`PIB municipal 2018`)~as.numeric(`habitantes 2019`)) #regresión lineal
+summary(f.demanda)
+plot(`habitantes 2019`,`PIB municipal 2018`)
+
+##regresión lineal #2, x=`Indice pobreza municipal 2018`, y=`PIB municipal 2018`
+f.demanda2=lm(as.numeric(`PIB municipal 2018`)~as.numeric(`Indice pobreza municipal 2018`)) #regresión lineal
+summary(f.demanda2)
+plot(`Indice pobreza municipal 2018`,`PIB municipal 2018`)
+
+
+
+```
+
+a) Interprete los coeficientes de acuerdo con el contexto de los datos .
+RGRESION LINEAL 1
+x=`habitantes 2019`
+y=`PIB municipal 2018`
+
+#REGRESION LINEAL #1
+B0=-395.9
+b1=0.02711
+
+Interpretacion:
+El promedio es de -395.9 
+La pendiente es positiva 
+
+REGRESION LINEAL 2
+x=`Indice pobreza municipal 2018`
+y=`PIB municipal 2018`
+#regresion lineal #2
+b0=3110.11
+b1=-55.34
+
+Interpretación:
+el promedio es de 3110.11
+la pendiente es negativa -55.34
+
+
+
+b) Calcule e interprete la predicción para la variable dependiente en el punto donde la independiente es igual al promedio
+
+```{r setup, include=TRUE}
+###CODIGO
+f.demanda$fitted.values ##regresion simple
+datos$prediccion1=f.demanda$fitted.values ##regresion simple, agregar la columna de valores ajustados a la tabla
+##valores ajustados
+
+f.demanda2$fitted.values ##regresion simple
+datos$prediccion2=f.demanda2$fitted.values ##regresion simple, agregar la columna de valores ajustados a la tabla
+##valores ajustados
+
+x=seq(0:1122) ###secuencia valores a la x 0-6000
+y=-395.9+(x*0.02711)## función
+
+plot(x,y)
+plot(as.numeric(`PIB municipal 2018`)~as.numeric(`habitantes 2019`))
+lines(datos$prediccion) 
+
+```
+
+3PUNTO
+```{r setup, include=TRUE}
+##solucion
+x=rnorm(10000, 250000, 50000) 
+beta1=rnorm(10000,3.5,0.01)
+beta0=runif(10000,1500,1600)
+plot(density(beta1), col="Red")
+y=beta0+beta1*x 
+datos=data.frame(x,y)
+
+set.seed(1) ##semilla
+datos1= datos[sample(nrow(datos),10),]
+datos2= datos[sample(nrow(datos),2000),]
+datos3= datos[sample(nrow(datos),6000),]
+
+reg1=lm(y~x, data=datos1)
+reg2=lm(y~x, data=datos2)
+reg3=lm(y~x, data=datos3)
+
+reg1=as.vector(reg1$coefficients)
+reg2=as.vector(reg2$coefficients)
+reg3=as.vector(reg3$coefficients)
+
+reg1[2]
+reg2[2]
+reg3[2]
+
+```
+Explicación: El beta estimado de la muestra que más se acerca al beta real es el de 3.499603 con un tamaño de muestra de 6000.
+Por lo tanto se cumple la propiedad de los estimadores "consistencia", la cual dice que a mayor tamaño la desviación es menor y cada vez nos vamos acercando al verdadero beta. "Siendo Dios"

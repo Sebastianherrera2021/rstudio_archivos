@@ -1,0 +1,40 @@
+---
+title: "PARCIAL ECONOMETRÍA"
+author: "juan sebastian herrera sanchez"
+date: "6 de septiembre de 2021"
+output: word_document
+---
+
+```{r setup, include=TRUE}
+###CODIGO
+library(readxl) ##leer
+datos<-hsranqui_Datos_punto_2
+attach(datos)
+#PIB municipal variable dependiente
+colnames(datos)=c("ciudad","habitantes 2019","Indice pobreza municipal 2018","PIB municipal 2018")#cambiar nombre de las variables porque son muy largos
+names(datos) #nombre variables
+
+##regresión lineal #1, x=`habitantes 2019`, y=`PIB municipal 2018`
+f.demanda=lm(as.numeric(`PIB municipal 2018`)~as.numeric(`habitantes 2019`)) #regresión lineal
+summary(f.demanda)
+plot(`habitantes 2019`,`PIB municipal 2018`)
+
+##regresión lineal #2, x=`Indice pobreza municipal 2018`, y=`PIB municipal 2018`
+f.demanda2=lm(as.numeric(`PIB municipal 2018`)~as.numeric(`Indice pobreza municipal 2018`)) #regresión lineal
+summary(f.demanda2)
+plot(`Indice pobreza municipal 2018`,`PIB municipal 2018`)
+
+
+
+
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

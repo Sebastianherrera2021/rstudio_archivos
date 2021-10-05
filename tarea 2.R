@@ -1,0 +1,80 @@
+#librerias
+library("ggplot2")
+#links
+
+###################TRANSFORMACIONESSSSS###################
+
+
+urlfile.death<-'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv'
+muertes.total<-read.csv(urlfile.death)
+
+urlfile.confir<-'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv'
+confirmados.total<-read.csv(urlfile.confir)
+
+urlfile.recove<-'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv'
+recuperados.total<-read.csv(urlfile.recove)
+
+##PORTUGAL
+attach(confirmados.total)
+names(confirmados.total)
+unique(confirmados.total$Country.Region) ###nombre de paises
+confirmados.Portugal=confirmados.total[Country.Region=="Portugal",]
+####transformando de filas a columnas
+#dataframe variables confirmados
+#confi.france=contagiados de francia
+##quitando primeras cuatro columnas
+
+
+##La columna País.Región 
+#contiene los nombres de los paises, para este caso se hace el ???ltro para Colombia
+#,pero podrá ser modi???cado por cualquier otro país de la base de datos.
+#Ahora, debemos modificar la base dedatos de horizontal a vertical y eliminar las que corresponden a caracteres así como,
+#eliminar los valorescorresponde a una longitudy latitud
+confi.Portugal=data.frame(t(confirmados.Portugal)[-c(1:4)])
+colnames(confi.Portugal)=c("Portugal.confirmados")
+attach(confi.Portugal)
+##como serie de tiempo
+#no es linea recta, exponencial,
+confi.Portugal.ts=ts(as.numeric(Portugal.confirmados),start=c(2020,1,22) , freq=365 )
+plot(confi.Portugal.ts)
+
+
+
+###RegresiÃ³n lineal
+tiempo=c(1:length(confi.Portugal.ts))
+reg1=lm(confi.Portugal.ts~ tiempo)
+predi=reg1$fitted.values
+plot(tiempo, confi.Portugal.ts, type="l", col="purple")
+lines(predi)
+lcovid=log(confi.Portugal.ts, exp(1))
+
+###Transformaciones log-log
+covid=confi.Portugal.ts+0.0000001
+lcovid=log(covid, exp(1))
+head(lcovid)
+ltiempo=log(tiempo, exp(1))
+reg2=lm(lcovid~ ltiempo)
+predi2=exp(reg2$fitted.values)
+predicciones=data.frame(covid, predi, predi2)
+plot(tiempo, confi.Portugal.ts, type="l", col="purple")
+lines(predi, col="red")
+lines(predi2, col="blue")
+###log-lin##
+reg3=lm(lcovid~ ltiempo)
+predi3=exp(reg3$fitted.values)
+predicciones=data.frame(covid, predi, predi2, predi3)
+plot(tiempo, confi.Portugal.ts, type="l", col="purple")
+lines(predi, col="red")
+lines(predi2, col="blue")
+lines(predi3, col="orange")
+####cuadratica##
+tiempo2=tiempo*tiempo
+tiempo3=tiempo*tiempo*tiempo
+reg4=lm(covid~ tiempo+tiempo2+tiempo3)
+predi4=(reg4$fitted.values)
+predicciones=data.frame(covid, predi, predi2, predi3, predi4)
+plot(tiempo, confi.Portugal.ts, type="l", col="purple")
+lines(predi, col="red")
+lines(predi2, col="blue")
+lines(predi3, col="orange")
+lines(predi4, col="green")

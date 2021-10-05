@@ -1,0 +1,74 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+The result will be displayed directly in the notebook. You could use a notebook as a simple calculator. For example, it's estimated that on average 256 children were born every minute in 2016. The code cell below calculates how many children were born on average on a day.
+# I'm a code cell, click me, then run me!
+256 * 60 * 24 # Children × minutes × hours
+
+2. Put any code in code cells
+But a code cell can contain much more than a simple one-liner! This is a notebook running R and you can put any R code in a code cell (but notebooks can run other languages too, like python). Below is a code cell where we define a whole new function (greet). To show the output of greet we can run it anywhere and the result is always printed out at the end of the code cell.
+greet <- function(first_name, last_name) {
+  paste("My name is ", last_name, ", ", 
+        first_name, " ", last_name, "!", sep = "")
+}
+
+# Replace with your first and last name.
+# That is, unless your name is already James Bond.
+greet("James", "Bond")
+
+3. Jupyter notebooks ??? data
+We've seen that notebooks can display basic objects such as numbers and strings. But notebooks also support the objects used in data science, which makes them great for interactive data analysis!
+
+For example, below we create a data frame by reading in a csv-file with the average global temperature for the years 1850 to 2016. If we look at the head of this data frame the notebook will render it as a nice-looking table.
+
+# Reading in the global temperature data,data
+global_temp <- read.csv("C:/Users/ADMIN/Downloads/global_temperature.csv")
+
+# Take a look at the first datapoints
+# .... YOUR CODE FOR TASK 3 ....
+
+4. Jupyter notebooks ??? plots
+Tables are nice but - as the saying goes - "a plot can show a thousand data points". Notebooks handle plots as well and all plots created in code cells will automatically be displayed inline.
+
+Let's take a look at the global temperature for the last 150 years.
+
+# Plotting global temperature in degrees celsius by year.
+plot(global_temp$year, global_temp$degrees_celsius, 
+     type = "l", col = "forestgreen", 
+     xlab = "....", ylab = "....")
+     
+5. Jupyter notebooks ??? Data Science
+Tables and plots are the most common outputs when doing data science and, as these outputs are rendered inline, notebooks works great not only for doing a data analysis but also for showing a data analysis. A finished notebook contains both the result and the code that produced it. This is useful when you want to share your findings or if you need to update your analysis with new data.
+
+Let's add some advanced data analysis to our notebook! For example, this (slightly complicated) code forecasts the global temperature 50 years into the future using an exponential smoothing state space model (ets).
+
+Note: Global temperature is a complex phenomenon and exponential smoothing is likely not a good model here. This is just an example of how easy it is to do (and show) complex forecasting in a Jupyter notebook.
+
+library(forecast)
+library(ggplot2)
+
+# Converting global_temp into a time series (ts) object.
+global_temp_ts <- ts(global_temp$degrees_celsius, 
+                     start = global_temp$year[1])
+
+# Forecasting global temperature 50 years into the future 
+# using an exponential smoothing state space model (ets).
+temperature_forecast <- forecast( ets(global_temp_ts), h = 50)
+
+# Plotting the forecast
+autoplot(temperature_forecast)
+
+# .... YOUR CODE FOR TASK 5 ....
+
+6. Goodbye for now!
+This was just a short introduction to Jupyter notebooks, an open source technology that is increasingly used for data science and analysis. I hope you enjoyed it! :)
+
+# Are you ready to get started with projects?
+I_am_ready <- TRUE
+
+# Ps. 
+# Feel free to try out any other stuff in this notebook. 
+# It's all yours!
+
+

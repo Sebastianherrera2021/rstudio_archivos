@@ -1,0 +1,89 @@
+---
+title: "Supuesto estimadores"
+author: "juan sebastian herrera sanchez"
+date: "23 de agosto de 2021"
+output:
+  html_document: default
+  word_document: default
+---
+
+```{r setup, include=TRUE}
+####Semilla####
+set.seed(1) ##en que punto debe empeza, sembrar una semilla para poder replicar el ejercicio, correr set al tiempo, mismos valores de x
+
+####Aleatorio####
+x=rnorm(2000, 1030000, 200000) ###2000 valores, promedio, desviacion de salarios "x para ver los datos variable exogena"
+hist(x,col="blue")
+head(x)
+##aleatorio
+beta1=rnorm(2000,0.3,0.01) ##inventando valores
+beta=runif(2000, 150000,2000000) ##distribución uniforme
+
+plot(density(beta1), col="Red") ##0.3 promedio "beta"
+####Ecuacion"####
+Y=beta+beta1*x ##genero variable y
+
+
+####regresion Eficiencia ###
+datos=data.frame(Y,x)
+##asumiendo que no tenemos idea o indicios de la relacion entre x y y
+head(datos)
+set.seed(1) ##para seleccionar los mismos
+datos1=datos[sample(nrow(datos), 100), ] #muestra de la poblacion
+lm(Y~x, data= datos1)
+set.seed(3)
+datos2=datos[sample(nrow(datos), 100), ] 
+lm(Y~x, data= datos2)
+set.seed(4)
+datos3=datos[sample(nrow(datos), 100), ] 
+##b11=-0.0585, b12=0.2938 "el que más se acerca al b real", b13=0.739
+efi=c(-0.0585,0.2938,0.739)
+plot(efi)
+sd(efi)
+
+
+### Consistencia 
+##A medida que aumenta la muestra el beta estimado sera igual que el real
+set.seed(1)
+datos12=datos[sample(nrow(datos), 10), ] 
+
+set.seed(1)
+datos13=datos[sample(nrow(datos), 1999), ] 
+lm(Y~x, data= datos13)
+
+
+### Insesgadez 
+z=rnorm(2000,100000 ,20000)
+beta2=rnorm(2000,0.9,0.01) #acompanar nueva variable, media cualquier valor sirve
+l=beta+beta1*x+beta2*z #z no está relacionado con x, no hay sesgo "insesgado"
+datos20=data.frame(l,x,z)
+head(datos20)
+set.seed(200)
+datos21=datos20[sample(nrow(datos20), 1999), ] 
+head(datos21)
+summary(lm(l~z+x, data= datos21))
+anova(lm(l~z+x, data= datos21))
+ssto=(5.7974*(10^14))+(9.5845*(10^11))
+R=(9.5845*(10^11))/ssto
+
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars) ##paquete
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure) ###insertar graficos
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
